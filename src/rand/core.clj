@@ -23,22 +23,22 @@
 
 (defn split-at-subs
   [sub s]
-  (let [delimiter (Object.) ;; sentinal between partitions
-        data? #(not (identical? % delimiter))
-        ;; sentinal indicating the next partition should be dropped
-        droppit (Object.)
+  (let [sentinal (Object.)
+        data? #(not (identical? % sentinal))
         ;; splitter expects one of:
         ;; A) a collapsed stream starting with a sentinal,
-        ;; B) the empty list to indicate there are no more partitions, or
-        ;; C) (cons droppit A-or-B) to indicate that the next partition has
-        ;;    been requested (and it is time to walk through and discard the
-        ;;    first partition).
-        splitter (fn splitter [s]
-                   (when (seq s)
-                     (lazy-seq
-                      (if (identical? droppit (first s))
-                        (splitter (drop-while data? (nnext s)))
-                        (cons (take-while data? (next s))
-                              (splitter (cons droppit s)))))))]
-    (splitter (cons delimiter (collapse-subs sub delimiter s)))))
+        ;; B) empty seq (() or nil) to indicate there are no more partitions
+        splitter (fn splitter
+                   ([s] (splitter s false))
+                   ;; When emitting a partition, set drop? to true to indicate
+                   ;; that before emitting the next one, the last one should
+                   ;; be skipped over.
+                   ([s drop?]
+                      (when (seq s)
+                        (lazy-seq
+                         (if drop?
+                           (splitter (drop-while data? (next s)) false)
+                           (cons (take-while data? (next s))
+                                 (splitter s true)))))))]
+    (splitter (cons sentinal (collapse-subs sub sentinal s)))))
 
