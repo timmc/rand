@@ -1,5 +1,7 @@
 (ns rand.core)
 
+;;;; Splitting
+
 (defn prefix?
   [sub s]
   (loop [sub (seq sub), s (seq s)]

@@ -2,6 +2,8 @@
   (:use [rand.core])
   (:use [clojure.test]))
 
+;;;; Splitting
+
 (deftest prefix
   (is (prefix? [] []))
   (is (prefix? [] [1 2 3]))
