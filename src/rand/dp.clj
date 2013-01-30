@@ -12,12 +12,11 @@
         (recur (conj ret (.charAt haystack pick)) (inc next))))))
 
 (defn choose-weighted
-  "Random weighted choice from a collection of probabilities that sum
-to unity. Returns index."
+  "Random weighted choice from a collection of weights. Returns index."
   [probs]
   {:pre [(seq probs)]}
   ;; http://stackoverflow.com/questions/14464011/idiomatic-clojure-for-picking-between-random-weighted-choices
-  (let [threshold (rand)]
+  (let [threshold (* (rand) (apply + probs))]
     (count (take-while #(<= % threshold) (reductions + probs)))))
 
 (defn dissociate*
