@@ -51,4 +51,7 @@ Does not work as expected with non-BMP characters."
         limit (Long/parseLong limit)
         sources (for [[f p] (partition 2 sources)]
                   [(slurp f) (Double/parseDouble p)])]
-    (println (apply str (take limit (dissociate sources window-size))))))
+    (doseq [c (take limit (dissociate sources window-size))]
+      (print c)
+      (flush))
+    (newline)))
