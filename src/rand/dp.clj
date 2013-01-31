@@ -1,15 +1,12 @@
 (ns rand.dp
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str])
+  (:import java.util.regex.Pattern))
 
 (defn find-nexts
-  [^String haystack ^String needle]
-  (loop [ret []
-         index 0]
-    (let [next (.indexOf haystack needle index)
-          pick (+ next (.length needle))]
-      (if (or (neg? next) (<= (.length haystack) pick))
-        ret
-        (recur (conj ret (.charAt haystack pick)) (inc next))))))
+  [haystack needle]
+  (let [finder (re-pattern (str "(?s)" (Pattern/quote needle) "(.)"))]
+    (map (comp first second)
+         (re-seq finder haystack))))
 
 (defn choose-weighted
   "Random weighted choice from a collection of weights. Returns index."
