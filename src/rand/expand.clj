@@ -23,9 +23,22 @@
   [form]
   (clojure.walk/prewalk (expand-once-fn) form))
 
-(defmacro expansions
-  [n expr]
-  `(take ~n (map strip-ns (iterate expand-once ~(list 'quote expr)))))
+(defn expansions
+  [form]
+  (map strip-ns (iterate expand-once form)))
+
+(defn demo
+  [n form]
+  (doseq [step (take n (expansions form))]
+    (println step))
+  ;; suppress nil
+  (symbol ""))
 
 (comment
-  (dorun (map println (expansions 5 (->> a b (->> c d))))))
+  (demo 5 '(->> a b (->> c d)))
+  ;; (->> a b (->> c d))
+  ;; (->> (->> a b) (->> c d))
+  ;; (->> c d (->> a b))
+  ;; (->> (->> c d) (->> a b))
+  ;; (->> a b (->> c d))
+)
