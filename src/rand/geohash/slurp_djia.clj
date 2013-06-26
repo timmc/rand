@@ -61,6 +61,17 @@
   "Read historical DJIA data from crox's server to file specified by
 first argument. Action is interruptible and will automatically resume
 where it left off when restarted. File contains one top-level form for
-each date, as [\"YYYY-MM-dd\" \"123.45\"]."
+each date, as [\"YYYY-MM-dd\" \"123.45\"].
+
+Example invocation:
+
+`$ lein run -m rand.geohash.slurp-djia cached/djia.sclj`
+
+Example output:
+
+`[\"1928-10-01\" \"239.43\"]
+[\"1928-10-02\" \"240.01\"]
+[\"1928-10-03\" \"238.14\"]
+...`"
   [& [file-path]]
   (dump-to-disk file-path))
